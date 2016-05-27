@@ -1,0 +1,21 @@
+{
+	"name": "Setblock Web Modeler",
+	"version": "0.0.0",
+	"description": "A web suite for creating Minecraft resource pack models.",
+	"repository":
+	{
+		"type": "git",
+		"url": "git://github.com/thejonwithnoh/SetblockWebModeler.git"
+	},
+	"keywords":
+	[
+		"minecraft"
+	],
+	"author": "Jonathan Faulch",
+	"license": "MIT",
+	"bugs":
+	{
+		"url": "https://github.com/thejonwithnoh/SetblockWebModeler/issues"
+	},
+	"homepage": "https://github.com/thejonwithnoh/SetblockWebModeler"
+}

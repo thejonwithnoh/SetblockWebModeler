@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Setblock Web Modeler</title>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" href="modeler.css">
+
+	</head>
+	<body>
+
+		<div id="help-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="help-modal-title">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="help-modal-title">Setblock Web Modeler Help</h4>
+					</div>
+					<div class="modal-body">
+						<dl>
+							<dt>Elements</dt><dd>Select individual elements by left clicking.  Select multiple elements by <kbd>Ctrl</kbd> / <kbd>Cmd</kbd> left clicking, or by creating a selection box by dragging.  Rearrange elements by dragging their <span class="glyphicon glyphicon-sort"></span> icon.</dd>
+							<dt>Center</dt><dd>Rotate and scale operations are performed relative to this point, as if the elements were first translated so that the center was at the origin, then transformed, and then translated back again so that the center is at its original location.</dd>
+							<dt>Value</dt><dd>Translate and scale operations use this value for their operation.</dd>
+							<dt>Translate</dt><dd>Adds or subtracts the given value from the values of the selected elements <code>to</code>, <code>from</code>, and <code>rotation.origin</code> coordinates.</dd>
+							<dt>Rotate</dt><dd>Performs a +/-90 degree coordinate rotation relative to the given center and axis, for the selected elements.  The end result is meant to resemble a simple rigid body rotation.  However, the implementation of this operation is complex. This operation rotates the <code>to</code>, <code>from</code>, and <code>rotation.origin</code> coordinates, maintains the orientation between <code>to</code> and <code>from</code>, updates <code>rotation.axis</code> and <code>rotation.angle</code> to match the new orientation, swaps faces, and updates face <code>rotation</code> values.</dd>
+							<dt>Scale</dt><dd>Multiplies or divides the given value from the values of the selected elements <code>to</code>, <code>from</code>, and <code>rotation.origin</code> coordinates.</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="about-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="about-modal-title">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="about-modal-title">About Setblock Web Modeler</h4>
+					</div>
+					<div class="modal-body">
+						<dl>
+							<dt>Author</dt><dd id="author"></dd>
+							<dt>Version</dt><dd id="version"></dd>
+							<dt>License</dt><dd id="license"></dd>
+							<dt>Website</dt><dd><a id="website"></a></dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<span class="navbar-brand">Setblock Web Modeler</span>
+				</div>
+				
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li class="active"><a id="nav-ops">Operations</a></li>
+						<li><a id="nav-props">Properties</a></li>
+						<li><a id="nav-opts">Options</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a data-toggle="modal" data-target="#help-modal">Help</a></li>
+						<li><a data-toggle="modal" data-target="#about-modal">About</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div id="sidebar">
+		
+			<div id="element-controls" class="control-panel">
+
+				<h3 style="margin-top:0;">Elements</h3>
+
+				<div id="element-list" class="ui-widget-content">
+					<ul></ul>
+				</div>
+
+				<div id="error-message" class="alert alert-danger hidden" role="alert"></div>
+
+				<div id="operations" class="control-panel">
+				
+					<h3>Center</h3>
+					<div class="row">
+						<div class="col-xs-4"><input id="center-x" type="text" class="form-control" title="Center x" placeholder="x" value="8"></div>
+						<div class="col-xs-4"><input id="center-y" type="text" class="form-control" title="Center y" placeholder="y" value="8"></div>
+						<div class="col-xs-4"><input id="center-z" type="text" class="form-control" title="Center z" placeholder="z" value="8"></div>
+					</div>
+
+					<h3>Value</h3>
+					<div class="row">
+						<div class="col-xs-4"><input id="value-x" type="text" class="form-control" title="Value x" placeholder="x" value="1"></div>
+						<div class="col-xs-4"><input id="value-y" type="text" class="form-control" title="Value y" placeholder="y" value="1"></div>
+						<div class="col-xs-4"><input id="value-z" type="text" class="form-control" title="Value z" placeholder="z" value="1"></div>
+					</div>
+
+					<h3>Translate</h3>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="translate('x', 1)" title="Add value to the x-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="translate('y', 1)" title="Add value to the y-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="translate('z', 1)" title="Add value to the z-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="translate('x', -1)" title="Subtract value from the x-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="translate('y', -1)" title="Subtract value from the y-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="translate('z', -1)" title="Subtract value from the z-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+					</div>
+
+					<h3>Rotate</h3>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="rotate('x', 1)" title="Rotate 90 degrees around the x-axis"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="rotate('y', 1)" title="Rotate 90 degrees around the y-axis"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="rotate('z', 1)" title="Rotate 90 degrees around the z-axis"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="rotate('x', -1)" title="Rotate -90 degrees around the x-axis"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="rotate('y', -1)" title="Rotate -90 degrees around the y-axis"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="rotate('z', -1)" title="Rotate -90 degrees around the z-axis"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+					</div>
+
+					<h3>Scale</h3>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="scale('x', 1)" title="Multiply value with the x-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="scale('y', 1)" title="Multiply value with the y-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="scale('z', 1)" title="Multiply value with the z-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="scale('x', -1)" title="Divide value from the x-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="scale('y', -1)" title="Divide value from the y-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="scale('z', -1)" title="Divide value from the z-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+					</div>
+				
+				</div>
+				
+				<div id="properties" class="control-panel hidden">
+				
+					<h3>Increment</h3>
+					<div class="row">
+						<div class="col-xs-4"><input id="increment-x" type="text" class="form-control" title="Increment x" placeholder="x" value="1"></div>
+						<div class="col-xs-4"><input id="increment-y" type="text" class="form-control" title="Increment y" placeholder="y" value="1"></div>
+						<div class="col-xs-4"><input id="increment-z" type="text" class="form-control" title="Increment z" placeholder="z" value="1"></div>
+					</div>
+				
+					<h3>From</h3>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="from('x', 1)" title="Add value to the x-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="from('y', 1)" title="Add value to the y-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="from('z', 1)" title="Add value to the z-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4"><input id="from-x" type="text" class="form-control" title="From x" placeholder="x"></div>
+						<div class="col-xs-4"><input id="from-y" type="text" class="form-control" title="From y" placeholder="y"></div>
+						<div class="col-xs-4"><input id="from-z" type="text" class="form-control" title="From z" placeholder="z"></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="from('x', -1)" title="Subtract value from the x-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="from('y', -1)" title="Subtract value from the y-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="from('z', -1)" title="Subtract value from the z-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+					</div>
+
+					<h3>To</h3>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('x', 1)" title="Add value to the x-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('y', 1)" title="Add value to the y-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('z', 1)" title="Add value to the z-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4"><input id="to-x" type="text" class="form-control" title="To x" placeholder="x"></div>
+						<div class="col-xs-4"><input id="to-y" type="text" class="form-control" title="To y" placeholder="y"></div>
+						<div class="col-xs-4"><input id="to-z" type="text" class="form-control" title="To z" placeholder="z"></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('x', -1)" title="Subtract value from the x-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('y', -1)" title="Subtract value from the y-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('z', -1)" title="Subtract value from the z-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+					</div>
+
+					<h3>Size</h3>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('x', 1)" title="Add value to the x-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('y', 1)" title="Add value to the y-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('z', 1)" title="Add value to the z-coordinates"><span class="glyphicon glyphicon-triangle-top"></span></button></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4"><input id="size-x" type="text" class="form-control" title="Size x" placeholder="x"></div>
+						<div class="col-xs-4"><input id="size-y" type="text" class="form-control" title="Size y" placeholder="y"></div>
+						<div class="col-xs-4"><input id="size-z" type="text" class="form-control" title="Size z" placeholder="z"></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('x', -1)" title="Subtract value from the x-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('y', -1)" title="Subtract value from the y-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+						<div class="col-xs-4"><button class="btn btn-default btn-block" onclick="to('z', -1)" title="Subtract value from the z-coordinates"><span class="glyphicon glyphicon-triangle-bottom"></span></button></div>
+					</div>
+					
+				</div>
+			
+			</div>
+			
+			<div id="options" class="control-panel hidden">
+				<div class="form-group"><label for="fov"  > Field of view      </label><input id="fov"   class="form-control"></div>
+				<div class="form-group"><label for="near" > Near plane         </label><input id="near"  class="form-control"></div>
+				<div class="form-group"><label for="far"  > Far plane          </label><input id="far"   class="form-control"></div>
+				<div class="form-group"><label for="zoom" > Zoom speed         </label><input id="zoom"  class="form-control"></div>
+				<div class="form-group"><label for="drag" > Drag speed         </label><input id="drag"  class="form-control"></div>
+				<div class="form-group"><label for="round"> Operation rounding </label><input id="round" class="form-control"></div>
+			</div>
+
+		</div>
+
+		<div id="content">
+			<textarea id="editor" class="form-control"></textarea>
+			<canvas id="gl-canvas">Your browser doesn't support the <code>&lt;canvas&gt;</code> element.</canvas>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/sylvester/0.1.3/sylvester.js"></script>
+		<script src="https://cdn.rawgit.com/mdn/webgl-examples/gh-pages/tutorial/glUtils.js"></script>
+
+		<script src="util.js"></script>
+		<script src="gl.js"></script>
+		<script src="ui.js"></script>
+
+	</body>
+</html>
