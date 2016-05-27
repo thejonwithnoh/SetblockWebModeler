@@ -102,18 +102,26 @@ $(function()
 			cancel: '.handle',
 			stop: function()
 			{
-				var selected = elementList.find('.ui-selected');
-				if (selected.length)
+				var selections = [];
+				var minIndex = Infinity;
+				var maxIndex = -Infinity;
+				elementList.find('.ui-selected').each(function(index, selected)
 				{
-					var selectedData = util.stringOfFire(selected.data('data'), indenter, 4, 2);
+					var selectedData = util.stringOfFire($(selected).data('data'), indenter, 4, 2);
 					var dataIndex = editor.getValue().indexOf(selectedData);
 					if (dataIndex !== -1)
 					{
-						editor.setSelection(editor.posFromIndex(dataIndex), editor.posFromIndex(dataIndex + selectedData.length));
-						editor.scrollIntoView({from:editor.posFromIndex(dataIndex), to:editor.posFromIndex(dataIndex + selectedData.length)});
+						minIndex = Math.min(minIndex, dataIndex);
+						maxIndex = Math.max(maxIndex, dataIndex + selectedData.length);
+						selections.push({ anchor: editor.posFromIndex(dataIndex), head: editor.posFromIndex(dataIndex + selectedData.length) });
 					}
-					updateProperties();
+				});
+				if (selections.length)
+				{
+					editor.setSelections(selections);
+					editor.scrollIntoView({ from: editor.posFromIndex(minIndex), to: editor.posFromIndex(maxIndex) });
 				}
+				updateProperties();
 			}
 		})
 		.sortable
