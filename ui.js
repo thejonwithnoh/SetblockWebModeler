@@ -19,13 +19,13 @@ $(function()
 	$('#license').text(packageData.license);
 	$('#website').attr('href', packageData.homepage).text(packageData.homepage);
 	
-	$('#nav-ops').click(function()
+	$('#nav-trans').click(function()
 	{
 		$('.navbar-nav li').removeClass('active');
-		$('#nav-ops').parent().addClass('active');
+		$('#nav-trans').parent().addClass('active');
 		$('.control-panel').addClass('hidden');
 		$('#element-controls').removeClass('hidden');
-		$('#operations').removeClass('hidden');
+		$('#transforms').removeClass('hidden');
 	});
 	
 	$('#nav-props').click(function()

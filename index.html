@@ -25,10 +25,10 @@
 					<div class="modal-body">
 						<dl>
 							<dt>Elements</dt><dd>Select individual elements by left clicking.  Select multiple elements by <kbd>Ctrl</kbd> / <kbd>Cmd</kbd> left clicking, or by creating a selection box by dragging.  Rearrange elements by dragging their <span class="glyphicon glyphicon-sort"></span> icon.</dd>
-							<dt>Center</dt><dd>Rotate and scale operations are performed relative to this point, as if the elements were first translated so that the center was at the origin, then transformed, and then translated back again so that the center is at its original location.</dd>
-							<dt>Value</dt><dd>Translate and scale operations use this value for their operation.</dd>
+							<dt>Center</dt><dd>Rotate and scale transforms are performed relative to this point, as if the elements were first translated so that the center was at the origin, then transformed, and then translated back again so that the center is at its original location.</dd>
+							<dt>Value</dt><dd>Translate and scale transforms use this value for their operation.</dd>
 							<dt>Translate</dt><dd>Adds or subtracts the given value from the values of the selected elements <code>to</code>, <code>from</code>, and <code>rotation.origin</code> coordinates.</dd>
-							<dt>Rotate</dt><dd>Performs a +/-90 degree coordinate rotation relative to the given center and axis, for the selected elements.  The end result is meant to resemble a simple rigid body rotation.  However, the implementation of this operation is complex. This operation rotates the <code>to</code>, <code>from</code>, and <code>rotation.origin</code> coordinates, maintains the orientation between <code>to</code> and <code>from</code>, updates <code>rotation.axis</code> and <code>rotation.angle</code> to match the new orientation, swaps faces, and updates face <code>rotation</code> values.</dd>
+							<dt>Rotate</dt><dd>Performs a +/-90 degree coordinate rotation relative to the given center and axis, for the selected elements.  The end result is meant to resemble a simple rigid body rotation.  However, the implementation of this transform is complex. This transform rotates the <code>to</code>, <code>from</code>, and <code>rotation.origin</code> coordinates, maintains the orientation between <code>to</code> and <code>from</code>, updates <code>rotation.axis</code> and <code>rotation.angle</code> to match the new orientation, swaps faces, and updates face <code>rotation</code> values.</dd>
 							<dt>Scale</dt><dd>Multiplies or divides the given value from the values of the selected elements <code>to</code>, <code>from</code>, and <code>rotation.origin</code> coordinates.</dd>
 						</dl>
 					</div>
@@ -69,7 +69,7 @@
 				
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
-						<li class="active"><a id="nav-ops">Operations</a></li>
+						<li class="active"><a id="nav-trans">Transforms</a></li>
 						<li><a id="nav-props">Properties</a></li>
 						<li><a id="nav-opts">Options</a></li>
 					</ul>
@@ -93,7 +93,7 @@
 
 				<div id="error-message" class="alert alert-danger hidden" role="alert"></div>
 
-				<div id="operations" class="control-panel">
+				<div id="transforms" class="control-panel">
 				
 					<h3>Center</h3>
 					<div class="row">
@@ -217,7 +217,7 @@
 				<div class="form-group"><label for="far"  > Far plane          </label><input id="far"   class="form-control"></div>
 				<div class="form-group"><label for="zoom" > Zoom speed         </label><input id="zoom"  class="form-control"></div>
 				<div class="form-group"><label for="drag" > Drag speed         </label><input id="drag"  class="form-control"></div>
-				<div class="form-group"><label for="round"> Operation rounding </label><input id="round" class="form-control"></div>
+				<div class="form-group"><label for="round"> Transform rounding </label><input id="round" class="form-control"></div>
 			</div>
 
 		</div>
