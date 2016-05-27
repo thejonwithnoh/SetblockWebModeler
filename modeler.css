@@ -68,6 +68,8 @@ a {
 	font-family: "Consolas", "Courier New", monospace;
 	resize: none;
 	left: 0;
+	white-space: pre;
+	overflow: auto;
 }
 
 #gl-canvas {
