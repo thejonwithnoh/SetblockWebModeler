@@ -212,7 +212,7 @@ function updateEditor()
 	editor.val(util.stringOfFire(data, indenter, 4));
 }
 
-function translate(axis, factor)
+function translateElements(axis, factor)
 {
 	performAction(function()
 	{
