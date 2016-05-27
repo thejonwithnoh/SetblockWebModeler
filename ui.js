@@ -10,7 +10,7 @@ var rounding = 0.01;
 
 $(function()
 {
-	editor = CodeMirror(document.getElementById('content'), { lineNumbers: true });
+	editor = CodeMirror(document.getElementById('content'), { lineNumbers: true, lineSeparator: '\r\n' });
 	editor.getWrapperElement().id = 'editor';
 	
 	elementList = $('#element-list > ul');
@@ -100,7 +100,21 @@ $(function()
 		({
 			filter: 'li',
 			cancel: '.handle',
-			stop: updateProperties
+			stop: function()
+			{
+				var selected = elementList.find('.ui-selected');
+				if (selected.length)
+				{
+					var selectedData = util.stringOfFire(selected.data('data'), indenter, 4, 2);
+					var dataIndex = editor.getValue().indexOf(selectedData);
+					if (dataIndex !== -1)
+					{
+						editor.setSelection(editor.posFromIndex(dataIndex), editor.posFromIndex(dataIndex + selectedData.length));
+						editor.scrollIntoView({from:editor.posFromIndex(dataIndex), to:editor.posFromIndex(dataIndex + selectedData.length)});
+					}
+					updateProperties();
+				}
+			}
 		})
 		.sortable
 		({
@@ -205,12 +219,13 @@ function updateModelData()
 		.prepend($('<span>').addClass('handle fa fa-arrows'));
 }
 
+function indenter(key, value, root, space, level)
+{
+	return level < 2 || (key === 'faces' && level < 3) ? space : '';
+}
+
 function updateEditor()
 {
-	var indenter = function(key, value, root, space, level)
-	{
-		return level < 2 || (key === 'faces' && level < 3) ? space : '';
-	};
 	editor.setValue(util.stringOfFire(data, indenter, 4));
 }
 
