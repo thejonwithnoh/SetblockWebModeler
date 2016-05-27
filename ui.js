@@ -10,9 +10,11 @@ var rounding = 0.01;
 
 $(function()
 {
+	editor = CodeMirror(document.getElementById('content'), { lineNumbers: true });
+	editor.getWrapperElement().id = 'editor';
+	
 	elementList = $('#element-list > ul');
 	errorMessage = $('#error-message');
-	editor = $('#editor');
 	
 	$('#author' ).text(packageData.author );
 	$('#version').text(packageData.version);
@@ -111,7 +113,7 @@ $(function()
 			}
 		});
 
-	editor.on('input', function()
+	editor.on('change', function()
 	{
 		performAction(updateModelData);
 	});
@@ -191,7 +193,7 @@ function updateModelData()
 {
 	elementList.empty();
 	clearCubes();
-	data = JSON.parse(editor.val());
+	data = JSON.parse(editor.getValue());
 	for (var i = 0; i < data.elements.length; i++)
 	{
 		var element = data.elements[i];
@@ -209,7 +211,7 @@ function updateEditor()
 	{
 		return level < 2 || (key === 'faces' && level < 3) ? space : '';
 	};
-	editor.val(util.stringOfFire(data, indenter, 4));
+	editor.setValue(util.stringOfFire(data, indenter, 4));
 }
 
 function translateElements(axis, factor)

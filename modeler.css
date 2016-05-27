@@ -11,7 +11,7 @@ a {
 #sidebar {
 	overflow: auto;
 	position: absolute;
-	top: 50px;
+	top: 52px;
 	left: 0;
 	width: 20em;
 	bottom: 0;
@@ -50,7 +50,7 @@ a {
 
 #content {
 	position: absolute;
-	top: 50px;
+	top: 52px;
 	left: 20em;
 	right: 0;
 	bottom: 0;
@@ -68,8 +68,6 @@ a {
 	font-family: "Consolas", "Courier New", monospace;
 	resize: none;
 	left: 0;
-	white-space: pre;
-	overflow: auto;
 }
 
 #gl-canvas {
