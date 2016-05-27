@@ -200,7 +200,7 @@ function updateModelData()
 	}
 	elementList.find('li')
 		.addClass('ui-corner-all ui-widget-content')
-		.prepend($('<span>').addClass('handle glyphicon glyphicon-sort'));
+		.prepend($('<span>').addClass('handle fa fa-arrows'));
 }
 
 function updateEditor()
