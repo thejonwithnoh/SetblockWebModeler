@@ -102,25 +102,7 @@ $(function()
 			cancel: '.handle',
 			stop: function()
 			{
-				var selections = [];
-				var minIndex = Infinity;
-				var maxIndex = -Infinity;
-				elementList.find('.ui-selected').each(function(index, selected)
-				{
-					var selectedData = util.stringOfFire($(selected).data('data'), indenter, 4, 2);
-					var dataIndex = editor.getValue().indexOf(selectedData);
-					if (dataIndex !== -1)
-					{
-						minIndex = Math.min(minIndex, dataIndex);
-						maxIndex = Math.max(maxIndex, dataIndex + selectedData.length);
-						selections.push({ anchor: editor.posFromIndex(dataIndex), head: editor.posFromIndex(dataIndex + selectedData.length) });
-					}
-				});
-				if (selections.length)
-				{
-					editor.setSelections(selections);
-					editor.scrollIntoView({ from: editor.posFromIndex(minIndex), to: editor.posFromIndex(maxIndex) });
-				}
+				updateHighlight();
 				updateProperties();
 			}
 		})
@@ -134,14 +116,28 @@ $(function()
 				updateEditor();
 			}
 		});
-
-	editor.on('change', function()
-	{
-		performAction(updateModelData);
-	});
 	
 	updateModelData();
 });
+
+function updateHighlight()
+{
+	editor.getAllMarks().forEach(function(marker) { marker.clear(); });
+	elementList.find('.ui-selected').each(function(index, selected)
+	{
+		var selectedData = util.stringOfFire($(selected).data('data'), indenter, 4, 2);
+		var dataIndex = editor.getValue().indexOf(selectedData);
+		if (dataIndex !== -1)
+		{
+			editor.markText
+			(
+				editor.posFromIndex(dataIndex),
+				editor.posFromIndex(dataIndex + selectedData.length),
+				{ className: 'ui-selected' }
+			);
+		}
+	});
+}
 
 function updateProperties()
 {
@@ -213,18 +209,26 @@ function elementIterator(callback)
 
 function updateModelData()
 {
+	editor.getAllMarks().forEach(function(marker) { marker.clear(); });
 	elementList.empty();
 	clearCubes();
 	data = JSON.parse(editor.getValue());
 	for (var i = 0; i < data.elements.length; i++)
 	{
 		var element = data.elements[i];
-		elementList.append($('<li>').text(element.name || '[Unnamed]').data('data', element));
+		elementList.append($('<li>')
+			.text(element.name || '[Unnamed]')
+			.data('data', element)
+			.addClass('ui-corner-all ui-widget-content')
+			.prepend($('<span>').addClass('handle fa fa-arrows')));
 		addCube(element);
 	}
-	elementList.find('li')
-		.addClass('ui-corner-all ui-widget-content')
-		.prepend($('<span>').addClass('handle fa fa-arrows'));
+	updateProperties();
+}
+
+function onEditorChange()
+{
+	performAction(updateModelData);
 }
 
 function indenter(key, value, root, space, level)
@@ -234,7 +238,12 @@ function indenter(key, value, root, space, level)
 
 function updateEditor()
 {
+	editor.off('change', onEditorChange);
+	var scrollInfo = editor.getScrollInfo();
 	editor.setValue(util.stringOfFire(data, indenter, 4));
+	updateHighlight();
+	editor.scrollTo(scrollInfo.left, scrollInfo.top);
+	editor.on('change', onEditorChange);
 }
 
 function translateElements(axis, factor)

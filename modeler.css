@@ -40,11 +40,11 @@ a {
 	cursor: pointer;
 }
 
-#element-list .ui-selected {
+.ui-selected {
 	background: #adf;
 }
 
-#element-list .ui-selecting {
+.ui-selecting {
 	background: #8bd;
 }
 
