@@ -47,14 +47,16 @@ $(function()
 		$('#options').removeClass('hidden');
 	});
 	
-	$('#fov'  ).val(camera.fovy).on('input', function() { camera.fovy = +$('#fov'  ).val(); });
-	$('#near' ).val(camera.near).on('input', function() { camera.near = +$('#near' ).val(); });
-	$('#far'  ).val(camera.far ).on('input', function() { camera.far  = +$('#far'  ).val(); });
-	$('#zoom' ).val(zoomFactor ).on('input', function() { zoomFactor  = +$('#zoom' ).val(); });
-	$('#drag' ).val(dragFactor ).on('input', function() { dragFactor  = +$('#drag' ).val(); });
-	$('#round').val(rounding   ).on('input', function() { rounding    = +$('#round').val(); });
-	
 	initCanvas();
+	
+	$('#axis' ).prop('checked', axis.isVisible).change(function() { axis.isVisible = this.checked; });
+	$('#grid' ).prop('checked', grid.isVisible).change(function() { grid.isVisible = this.checked; });
+	$('#fov'  ).val(camera.fovy).on('input', function() { camera.fovy = +$(this).val(); });
+	$('#near' ).val(camera.near).on('input', function() { camera.near = +$(this).val(); });
+	$('#far'  ).val(camera.far ).on('input', function() { camera.far  = +$(this).val(); });
+	$('#zoom' ).val(zoomFactor ).on('input', function() { zoomFactor  = +$(this).val(); });
+	$('#drag' ).val(dragFactor ).on('input', function() { dragFactor  = +$(this).val(); });
+	$('#round').val(rounding   ).on('input', function() { rounding    = +$(this).val(); });
 	
 	$(window).resize(function()
 	{
