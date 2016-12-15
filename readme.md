@@ -8,6 +8,11 @@ About
 
 Setblock Web Modeler is a web suite for creating Minecraft resource pack models.
 
+Demo
+----
+
+Check out a live demo [here](https://thejonwithnoh.github.io/SetblockWebModeler/).
+
 Disclaimer
 ----------
 
