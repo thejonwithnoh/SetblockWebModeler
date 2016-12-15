@@ -1,0 +1,76 @@
+html,
+body {
+	height: 100%;
+	overflow: hidden;
+}
+
+a {
+	cursor: pointer;
+}
+
+#sidebar {
+	overflow: auto;
+	position: absolute;
+	top: 50px;
+	left: 0;
+	width: 20em;
+	bottom: 0;
+	padding: 1em;
+}
+
+#sidebar .row,
+#sidebar .row .col-xs-4 {
+	padding: 0;
+	margin: 0;
+}
+
+#sidebar input[type=text] {
+	text-align: center;
+}
+
+#element-list,
+#error-message {
+	height: 240px;
+	overflow: auto;
+}
+
+#element-list ul {
+	list-style-type: none;
+	padding: 0;
+	cursor: pointer;
+}
+
+#element-list .ui-selected {
+	background: #adf;
+}
+
+#element-list .ui-selecting {
+	background: #8bd;
+}
+
+#content {
+	position: absolute;
+	top: 50px;
+	left: 20em;
+	right: 0;
+	bottom: 0;
+}
+
+#editor,
+#gl-canvas {
+	position: absolute;
+	top: 0;
+	width: 50%;
+	height: 100%;
+}
+
+#editor {
+	font-family: "Consolas", "Courier New", monospace;
+	resize: none;
+	left: 0;
+}
+
+#gl-canvas {
+	background: black;
+	right: 0;
+}
