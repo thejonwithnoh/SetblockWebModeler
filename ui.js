@@ -308,7 +308,7 @@ function rotate(axis, factor)
 					var newFaceUp = rotater.x($V(faceDirection.up.vector)).round();
 					var rotDir = Math.sign($V(newFaceDirection.up.vector).cross(newFaceUp).dot(newFaceDirection.vector));
 					var rotVal = util.round(util.toDegrees($V(newFaceDirection.up.vector).angleFrom(newFaceUp)) * (rotDir === 0 ? 1 : rotDir), 90);
-					newFace.rotation = ((newFace.rotation || 0) + rotVal + 360) % 360;
+					newFace.rotation = ((newFace.rotation || 0) - rotVal + 360) % 360;
 					if (!newFace.rotation) { delete newFace.rotation; }
 				}
 			}
