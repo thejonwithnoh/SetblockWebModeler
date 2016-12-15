@@ -1,6 +1,7 @@
 var gl;
 
 var axis;
+var grid;
 var cubes;
 var atlas;
 var shader;
@@ -63,6 +64,7 @@ function initCanvas()
 
 			cubes = [];
 			createAxis();
+			createGrid();
 			initTextures();
 			initShaders();
 
@@ -154,6 +156,7 @@ function drawScene()
 	gl.uniformMatrix4fv(gl.getUniformLocation(shader.program, "uPMatrix"), false, new Float32Array(pMatrix.flatten()));
 	gl.uniformMatrix4fv(gl.getUniformLocation(shader.program, "uMVMatrix"), false, new Float32Array(mvMatrix.flatten()));
 
+	grid.render();
 	cubes.forEach(function(cube) { cube.render(); });
 	
 	gl.clear(gl.DEPTH_BUFFER_BIT);
@@ -186,6 +189,39 @@ function createAxis()
 	});
 	
 	axis = new Shape(gl.LINES, positions, colors, textureCoordinates, indices);
+}
+
+function createGrid()
+{
+	var size = 16;
+	var positions = [];
+	var colors = [];
+	var textureCoordinates = [];
+	var indices = [];
+	
+	var index = 0;
+	for (var z = 0; z <= size; z++)
+	{
+		for (var x = 0; x < size; x++)
+		{
+			positions.push(x, 0, z, x + 1, 0, z);
+			colors.push(1, 1, 1, 1, 1, 1, 1, 1);
+			textureCoordinates.push(0, 0, 0, 0);
+			indices.push(index++, index++);
+		}
+	}
+	for (var x = 0; x <= size; x++)
+	{
+		for (var z = 0; z < size; z++)
+		{
+			positions.push(x, 0, z, x, 0, z + 1);
+			colors.push(1, 1, 1, 1, 1, 1, 1, 1);
+			textureCoordinates.push(0, 0, 0, 0);
+			indices.push(index++, index++);
+		}
+	}
+	
+	grid = new Shape(gl.LINES, positions, colors, textureCoordinates, indices);
 }
 
 function addCube(element)
@@ -287,6 +323,7 @@ var Shape = function(primitive, positions, colors, textureCoordinates, indices)
 {
 	this.primitive = primitive;
 	this.indexCount = indices.length;
+	this.isVisible = true;
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.positions = gl.createBuffer());
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
@@ -303,6 +340,8 @@ var Shape = function(primitive, positions, colors, textureCoordinates, indices)
 
 Shape.prototype.render = function()
 {
+	if (!this.isVisible) return;
+	
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.positions);
 	gl.vertexAttribPointer(shader.attributes.position, 3, gl.FLOAT, false, 0, 0);
 
