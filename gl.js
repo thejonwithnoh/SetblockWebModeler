@@ -10,7 +10,7 @@ var camera =
 {
 	center: $V([8, 8, 8]),
 	shift: $V([0, 0, 100]),
-	theta: 45,
+	theta: -45,
 	phi: 30,
 	fovy: 70,
 	near: 1,
