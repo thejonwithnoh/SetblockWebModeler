@@ -47,6 +47,17 @@ var util =
 		return Math.round(value / denomination) * denomination;
 	},
 	
+	mod: function(a, b)
+	{
+		return (a % b + b) % b;
+	},
+	
+	arrayRotate: function(array, count)
+	{
+		array.unshift.apply(array, array.splice(util.mod(count, array.length)));
+		return array;
+	},
+	
 	swap: function(objectA, propertyA, objectB, propertyB)
 	{
 		var temp = objectA[propertyA];

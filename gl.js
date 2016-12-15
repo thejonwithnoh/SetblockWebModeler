@@ -288,13 +288,16 @@ function addCube(element)
 		u = [ util.interpolate(face.uv[0], 0, 16, u[0], u[1]), util.interpolate(face.uv[2], 0, 16, u[0], u[1]) ];
 		v = [ util.interpolate(face.uv[1], 0, 16, v[0], v[1]), util.interpolate(face.uv[3], 0, 16, v[0], v[1]) ];
 		
-		var rotationMatrix = Matrix.Rotation(util.toRadians(face.rotation || 0));
-		var rotationOrigin = $V([(u[0] + u[1]) / 2, (v[0] + v[1]) / 2]);
-		textureCoordinates = textureCoordinates
-			.concat(rotationMatrix.multiply($V([u[0], v[1]]).subtract(rotationOrigin)).add(rotationOrigin).elements)
-			.concat(rotationMatrix.multiply($V([u[1], v[1]]).subtract(rotationOrigin)).add(rotationOrigin).elements)
-			.concat(rotationMatrix.multiply($V([u[1], v[0]]).subtract(rotationOrigin)).add(rotationOrigin).elements)
-			.concat(rotationMatrix.multiply($V([u[0], v[0]]).subtract(rotationOrigin)).add(rotationOrigin).elements);
+		var localTextureCoordinates =
+		[
+			u[0], v[1],
+			u[1], v[1],
+			u[1], v[0],
+			u[0], v[0]
+		];
+		
+		util.arrayRotate(localTextureCoordinates, 2 * (face.rotation || 0) / 90);
+		textureCoordinates.push.apply(textureCoordinates, localTextureCoordinates);
 	});
 	
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
