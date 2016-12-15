@@ -10,22 +10,24 @@ var rounding = 0.01;
 
 $(function()
 {
+	editor = CodeMirror(document.getElementById('content'), { lineNumbers: true, lineSeparator: '\r\n' });
+	editor.getWrapperElement().id = 'editor';
+	
 	elementList = $('#element-list > ul');
 	errorMessage = $('#error-message');
-	editor = $('#editor');
 	
 	$('#author' ).text(packageData.author );
 	$('#version').text(packageData.version);
 	$('#license').text(packageData.license);
 	$('#website').attr('href', packageData.homepage).text(packageData.homepage);
 	
-	$('#nav-ops').click(function()
+	$('#nav-trans').click(function()
 	{
 		$('.navbar-nav li').removeClass('active');
-		$('#nav-ops').parent().addClass('active');
+		$('#nav-trans').parent().addClass('active');
 		$('.control-panel').addClass('hidden');
 		$('#element-controls').removeClass('hidden');
-		$('#operations').removeClass('hidden');
+		$('#transforms').removeClass('hidden');
 	});
 	
 	$('#nav-props').click(function()
@@ -98,7 +100,11 @@ $(function()
 		({
 			filter: 'li',
 			cancel: '.handle',
-			stop: updateProperties
+			stop: function()
+			{
+				updateHighlight();
+				updateProperties();
+			}
 		})
 		.sortable
 		({
@@ -110,14 +116,28 @@ $(function()
 				updateEditor();
 			}
 		});
-
-	editor.on('input', function()
-	{
-		performAction(updateModelData);
-	});
 	
 	updateModelData();
 });
+
+function updateHighlight()
+{
+	editor.getAllMarks().forEach(function(marker) { marker.clear(); });
+	elementList.find('.ui-selected').each(function(index, selected)
+	{
+		var selectedData = util.stringOfFire($(selected).data('data'), indenter, 4, 2);
+		var dataIndex = editor.getValue().indexOf(selectedData);
+		if (dataIndex !== -1)
+		{
+			editor.markText
+			(
+				editor.posFromIndex(dataIndex),
+				editor.posFromIndex(dataIndex + selectedData.length),
+				{ className: 'ui-selected' }
+			);
+		}
+	});
+}
 
 function updateProperties()
 {
@@ -189,30 +209,44 @@ function elementIterator(callback)
 
 function updateModelData()
 {
+	editor.getAllMarks().forEach(function(marker) { marker.clear(); });
 	elementList.empty();
 	clearCubes();
-	data = JSON.parse(editor.val());
+	data = JSON.parse(editor.getValue());
 	for (var i = 0; i < data.elements.length; i++)
 	{
 		var element = data.elements[i];
-		elementList.append($('<li>').text(element.name || '[Unnamed]').data('data', element));
+		elementList.append($('<li>')
+			.text(element.name || '[Unnamed]')
+			.data('data', element)
+			.addClass('ui-corner-all ui-widget-content')
+			.prepend($('<span>').addClass('handle fa fa-arrows')));
 		addCube(element);
 	}
-	elementList.find('li')
-		.addClass('ui-corner-all ui-widget-content')
-		.prepend($('<span>').addClass('handle glyphicon glyphicon-sort'));
+	updateProperties();
+}
+
+function onEditorChange()
+{
+	performAction(updateModelData);
+}
+
+function indenter(key, value, root, space, level)
+{
+	return level < 2 || (key === 'faces' && level < 3) ? space : '';
 }
 
 function updateEditor()
 {
-	var indenter = function(key, value, root, space, level)
-	{
-		return level < 2 || (key === 'faces' && level < 3) ? space : '';
-	};
-	editor.val(util.stringOfFire(data, indenter, 4));
+	editor.off('change', onEditorChange);
+	var scrollInfo = editor.getScrollInfo();
+	editor.setValue(util.stringOfFire(data, indenter, 4));
+	updateHighlight();
+	editor.scrollTo(scrollInfo.left, scrollInfo.top);
+	editor.on('change', onEditorChange);
 }
 
-function translate(axis, factor)
+function translateElements(axis, factor)
 {
 	performAction(function()
 	{
