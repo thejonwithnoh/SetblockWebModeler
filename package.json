@@ -1,6 +1,6 @@
 {
 	"name": "Setblock Web Modeler",
-	"version": "0.2.1",
+	"version": "0.2.2-SNAPSHOT",
 	"description": "A web suite for creating Minecraft resource pack models.",
 	"repository":
 	{

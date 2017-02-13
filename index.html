@@ -20,6 +20,63 @@
 	</head>
 	<body>
 
+		<div id="import-texture-model-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import-texture-model-modal-title">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="import-texture-model-modal-title">Import Texture Model</h4>
+					</div>
+					<div class="modal-body">
+						<div id="import-texture-model-form" class="form-horizontal">
+							<div class="form-group">
+								<label for="import-texture-model-texture-name" class="col-sm-2 control-label">Texture</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" id="import-texture-model-texture-name" />
+								</div>
+								<label for="orientation" class="col-sm-2 control-label">Orientation</label>
+								<div class="col-sm-10">
+									<label class="radio-inline">
+										<input type="radio" name="orientation" value="minimal" disabled> Minimal
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="orientation" value="horizontal" disabled> Horizontal
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="orientation" value="vertical" checked> Vertical
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="orientation" value="pixel" disabled> Per Pixel
+									</label>
+								</div>
+								<label class="col-sm-2 control-label">Placement</label>
+								<div class="col-sm-10">
+									<label class="radio-inline">
+										<input type="radio" name="placement" value="append" checked> Append
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="placement" value="replace"> Replace
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="alert alert-warning" role="alert">
+							All orientations except for "Vertical" are disabled, as this feature is in beta.
+						</div>
+						<div class="collapse error-alert">
+							<div class="alert alert-danger" role="alert">
+								<strong>Error:</strong> The texture name is invalid.
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-primary" id="import-texture-model-button">Import</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div id="help-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="help-modal-title">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
@@ -79,6 +136,12 @@
 						<li><a id="nav-opts">Options</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown">Tools <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a data-toggle="modal" data-target="#import-texture-model-modal">Import Texture Model</a></li>
+							</ul>
+						</li>
 						<li><a data-toggle="modal" data-target="#help-modal">Help</a></li>
 						<li><a data-toggle="modal" data-target="#about-modal">About</a></li>
 					</ul>

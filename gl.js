@@ -90,6 +90,18 @@ function initTextures()
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
 		gl.generateMipmap(gl.TEXTURE_2D);
 		gl.bindTexture(gl.TEXTURE_2D, null);
+		
+		var framebuffer = gl.createFramebuffer();
+		gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, atlas.texture, 0);
+		
+		atlas.width = this.width;
+		atlas.height = this.height;
+
+		atlas.data = new Uint8Array(this.width * this.height * 4);
+		gl.readPixels(0, 0, this.width, this.height, gl.RGBA, gl.UNSIGNED_BYTE, atlas.data);
+		
+		gl.deleteFramebuffer(framebuffer);
 	};
 	atlasImage.src = "atlas.png";
 }
