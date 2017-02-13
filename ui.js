@@ -47,6 +47,36 @@ $(function()
 		$('#options').removeClass('hidden');
 	});
 	
+	$('#import-texture-model-modal').on('shown.bs.modal', function()
+	{
+		$('#import-texture-model-texture-name').focus();
+	});
+	
+	$('#import-texture-model-modal').on('hidden.bs.modal', function()
+	{
+		$('#import-texture-model-modal .error-alert').collapse('hide');
+	});
+	
+	$('#import-texture-model-button').click(function()
+	{
+		var result = importTexture
+		(
+			$('#import-texture-model-texture-name').val(),
+			$('#import-texture-model-form input[name=orientation]:checked').val(),
+			$('#import-texture-model-form input[name=placement]:checked').val()
+		);
+		if (result)
+		{
+			$('#import-texture-model-modal').modal('hide');
+		}
+		else
+		{
+			$('#import-texture-model-modal .error-alert').collapse('show');
+		}
+		updateEditor();
+		updateModelData();
+	});
+	
 	initCanvas();
 	
 	$('#axis' ).prop('checked', axis.isVisible).change(function() { axis.isVisible = this.checked; });
@@ -372,4 +402,61 @@ function to(axis, factor)
 			element.to[index] = util.round(element.to[index] + value, rounding);
 		});
 	});
+}
+
+function importTexture(name, orientation, placement)
+{
+	var coordinates = atlas.mapping[name];
+	if (!coordinates) { return; }
+	
+	data.textures[name] = name;
+	if (placement === "replace")
+	{
+		data.elements = [];
+	}
+	var pushElement = function()
+	{
+		if (start)
+		{
+			data.elements.push
+			({
+				"name": name + " (" + x + ", " + start + "-" + (y - 1) + ")",
+				"from": [x    , 0, start],
+				"to":   [x + 1, 1, y    ],
+				"faces":
+				{
+					"west":  { "uv":[x, start, x + 1, y        ], "texture": "#" + name, "rotation": 270 },
+					"east":  { "uv":[x, start, x + 1, y        ], "texture": "#" + name, "rotation":  90 },
+					"down":  { "uv":[x, start, x + 1, y        ], "texture": "#" + name, "rotation": 180 },
+					"up":    { "uv":[x, start, x + 1, y        ], "texture": "#" + name                  },
+					"north": { "uv":[x, start, x + 1, start + 1], "texture": "#" + name                  },
+					"south": { "uv":[x, y - 1, x + 1, y        ], "texture": "#" + name                  }
+				}
+			});
+			start = null;
+		}
+	};
+	for (var u = coordinates.u[0] * atlas.width; u < coordinates.u[1] * atlas.width; u++)
+	{
+		var x = u - coordinates.u[0] * atlas.width;
+		var start = null;
+		for (var v = coordinates.v[0] * atlas.height; v < coordinates.v[1] * atlas.height; v++)
+		{
+			var y = v - coordinates.v[0] * atlas.height;
+			if (atlas.data[4 * (v * atlas.height + u) + 3] > 0)
+			{
+				if (!start)
+				{
+					start = y;
+				}
+			}
+			else
+			{
+				pushElement();
+			}
+		}
+		pushElement();
+	}
+	
+	return coordinates;
 }
