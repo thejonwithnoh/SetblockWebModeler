@@ -79,6 +79,15 @@ $(function()
 	
 	initCanvas();
 	
+	$('#import-texture-model-texture-name').autocomplete
+	({
+		appendTo: '#import-texture-model-modal',
+		source: $.map(atlas.mapping, function(value, key)
+		{
+			return key;
+		})
+	});
+	
 	$('#axis' ).prop('checked', axis.isVisible).change(function() { axis.isVisible = this.checked; });
 	$('#grid' ).prop('checked', grid.isVisible).change(function() { grid.isVisible = this.checked; });
 	$('#fov'  ).val(camera.fovy).on('input', function() { camera.fovy = +$(this).val(); });
