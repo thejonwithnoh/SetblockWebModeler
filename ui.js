@@ -79,6 +79,15 @@ $(function()
 	
 	initCanvas();
 	
+	$('#import-texture-model-texture-name').autocomplete
+	({
+		appendTo: '#import-texture-model-modal',
+		source: $.map(atlas.mapping, function(value, key)
+		{
+			return key;
+		})
+	});
+	
 	$('#axis' ).prop('checked', axis.isVisible).change(function() { axis.isVisible = this.checked; });
 	$('#grid' ).prop('checked', grid.isVisible).change(function() { grid.isVisible = this.checked; });
 	$('#fov'  ).val(camera.fovy).on('input', function() { camera.fovy = +$(this).val(); });
@@ -416,8 +425,10 @@ function importTexture(name, orientation, placement)
 	}
 	var pushElement = function()
 	{
-		if (start)
+		if (start !== null)
 		{
+			var x = u - coordinates.u[0] * atlas.width;
+			var y = v - coordinates.v[0] * atlas.height;
 			data.elements.push
 			({
 				"name": name + " (" + x + ", " + start + "-" + (y - 1) + ")",
@@ -438,16 +449,14 @@ function importTexture(name, orientation, placement)
 	};
 	for (var u = coordinates.u[0] * atlas.width; u < coordinates.u[1] * atlas.width; u++)
 	{
-		var x = u - coordinates.u[0] * atlas.width;
 		var start = null;
 		for (var v = coordinates.v[0] * atlas.height; v < coordinates.v[1] * atlas.height; v++)
 		{
-			var y = v - coordinates.v[0] * atlas.height;
 			if (atlas.data[4 * (v * atlas.height + u) + 3] > 0)
 			{
-				if (!start)
+				if (start === null)
 				{
-					start = y;
+					start = v - coordinates.v[0] * atlas.height;
 				}
 			}
 			else
